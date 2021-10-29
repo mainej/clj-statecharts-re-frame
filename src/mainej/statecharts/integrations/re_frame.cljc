@@ -24,7 +24,7 @@
 (defn rf-transition-scheduler [fsm-path clock]
   (fsm.d/make-scheduler (fn [state delay-event]
                           (rf/dispatch [::transition delay-event {:fsm-path fsm-path
-                                                                  :state-path (:_rf-path state)}]))
+                                                                  :state-path (:_id state)}]))
                         clock))
 
 (defn dispatch-callback
@@ -57,10 +57,11 @@
 (rf/reg-event-db
  ::register
  (fn [db [_ fsm-path machine {:keys [clock]}]]
-   (let [machine (assoc machine
-                        :_epoch 0
-                        :scheduler (rf-transition-scheduler fsm-path (or clock (clock/wall-clock))))]
-     (assoc-in db (u/ensure-vector fsm-path) machine))))
+   (let [fsm-path (u/ensure-vector fsm-path)
+         machine  (assoc machine
+                         :_epoch 0
+                         :scheduler (rf-transition-scheduler fsm-path (or clock (clock/wall-clock))))]
+     (assoc-in db fsm-path machine))))
 
 ;; Advance a machine's epoch. After this, transitions related to states created in
 ;; earlier epochs will be dropped.
@@ -92,7 +93,6 @@
        {::log [:error (str "FSM not found. fsm-path=" fsm-path)]
         :db   db}
        (let [initialize-args (update initialize-args :context assoc
-                                     :_rf-path state-path
                                      :_epoch (:_epoch machine))]
          {:db (assoc-in db state-path (fsm/initialize machine initialize-args))})))))
 

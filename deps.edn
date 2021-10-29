@@ -1,6 +1,6 @@
 {:paths   ["src" "resources"]
  :deps    {org.clojure/clojure              {:mvn/version "1.10.3"}
-           io.github.mainej/clj-statecharts {:git/sha "ad192c8e73de31501db2135abf775cc087aec454"}
+           io.github.mainej/clj-statecharts {:git/sha "e0c64e80f5a0df554e8c440c2d9993875e9db2fb"}
            re-frame/re-frame                {:mvn/version "1.1.1"}
            day8.re-frame/http-fx            {:mvn/version "v0.2.0"}}
  :aliases {:test  {:extra-paths ["test"]

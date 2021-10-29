@@ -50,14 +50,7 @@
       (when-let [event-vector (and (seq path) (get-in state path))]
         (rf/dispatch (vec (concat event-vector [state event])))))))
 
-(rf/reg-fx
- ::log
- (fn [msg]
-   #?(:cljs
-      (when ^boolean goog.DEBUG
-        (js/console.log msg)))
-   #?(:clj
-      (println msg))))
+(rf/reg-fx ::log (fn [msgs] (apply rf/console msgs)))
 
 ;; Register a `machine`, storing it in the app-db at `fsm-path`. After
 ;; registration, the machine can be used in `::initialize` and `::transition`.
@@ -96,7 +89,7 @@
          state-path (u/ensure-vector state-path)
          machine    (get-in db fsm-path)]
      (if (not machine)
-       {::log (str "FSM not found. fsm-path=" fsm-path)
+       {::log [:error (str "FSM not found. fsm-path=" fsm-path)]
         :db   db}
        (let [initialize-args (update initialize-args :context assoc
                                      :_rf-path state-path
@@ -123,7 +116,7 @@
                       (> (:_epoch machine) (:_epoch state))
                       (str "Ignored event in new epoch. event-type=" (:type fsm-event) " fsm-path=" fsm-path " state-path=" state-path))]
      (if error
-       {::log error
+       {::log [:error error]
         :db   db}
        {:db (update-in db state-path
                        (fn [state]

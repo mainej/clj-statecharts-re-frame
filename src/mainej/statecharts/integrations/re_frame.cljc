@@ -23,9 +23,10 @@
 
 (defn rf-transition-scheduler [fsm-path clock]
   (fsm.d/make-scheduler (fn [state delay-event]
-                          (rf/dispatch [::transition delay-event {:fsm-path fsm-path
-                                                                  :state-path (:_id state)}]))
-                        clock))
+                          (rf/dispatch [::transition delay-event {:fsm-path   fsm-path
+                                                                  :state-path (:_state-path state)}]))
+                        clock
+                        :_state-path))
 
 (defn dispatch-callback
   "A utility for building state machine actions. Will dispatch an event vector
@@ -96,6 +97,7 @@
        {::log [:error (str "FSM not found. fsm-path=" fsm-path)]
         :db   db}
        (let [initialize-args (update initialize-args :context assoc
+                                     :_state-path state-path
                                      :_epoch (:_epoch machine))]
          {:db (assoc-in db state-path (fsm/initialize machine initialize-args))})))))
 

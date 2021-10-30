@@ -50,7 +50,10 @@
       (when-let [event-vector (and (seq path) (get-in state path))]
         (rf/dispatch (vec (concat event-vector [state event])))))))
 
-(rf/reg-fx ::log (fn [msgs] (apply rf/console msgs)))
+(rf/reg-fx
+ ::log
+ (fn [[level & msgs]]
+   (apply rf/console level "Statecharts:" msgs)))
 
 ;; Register a `machine`, storing it in the app-db at `fsm-path`. After
 ;; registration, the machine can be used in `::initialize` and `::transition`.
@@ -108,15 +111,15 @@
          state      (get-in db state-path)
          error      (cond
                       (not machine)
-                      (str "FSM not found. fsm-path=" fsm-path)
+                      [:error (str "FSM not found. fsm-path=" fsm-path)]
 
                       (not state)
-                      (str "State not found. state-path=" state-path)
+                      [:error (str "State not found. state-path=" state-path)]
 
                       (> (:_epoch machine) (:_epoch state))
-                      (str "Ignored event in new epoch. event-type=" (:type fsm-event) " fsm-path=" fsm-path " state-path=" state-path))]
+                      [:log (str "Ignored event in new epoch. event-type=" (:type fsm-event) " fsm-path=" fsm-path " state-path=" state-path)])]
      (if error
-       {::log [:error error]
+       {::log error
         :db   db}
        {:db (update-in db state-path
                        (fn [state]

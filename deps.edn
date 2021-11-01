@@ -1,8 +1,8 @@
 {:paths   ["src" "resources"]
- :deps    {org.clojure/clojure              {:mvn/version "1.10.3"}
-           io.github.mainej/clj-statecharts {:git/sha "e0c64e80f5a0df554e8c440c2d9993875e9db2fb"}
-           re-frame/re-frame                {:mvn/version "1.1.1"}
-           day8.re-frame/http-fx            {:mvn/version "v0.2.0"}}
+ :deps    {org.clojure/clojure                   {:mvn/version "1.10.3"}
+           io.github.lucywang000/clj-statecharts {:git/sha "7b3ad0e16a8ad7d76f2a0397f321cab9ca32e926"}
+           re-frame/re-frame                     {:mvn/version "1.1.1"}
+           day8.re-frame/http-fx                 {:mvn/version "v0.2.0"}}
  :aliases {:test  {:extra-paths ["test"]
                    :extra-deps  {org.clojure/test.check               {:mvn/version "1.1.0"}
                                  io.github.cognitect-labs/test-runner {:git/tag "v0.5.0" :git/sha "48c3c67"}
